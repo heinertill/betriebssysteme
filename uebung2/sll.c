@@ -17,8 +17,46 @@ struct list* delete(struct list *, int);
 struct list* find(struct list *, int);
 
 int main() {
-		
 
+	// Test append()
+        printf("Test append():\n");
+        struct list *l = (struct list *) malloc(sizeof(struct list));
+        l->head = NULL;
+        l->tail = &l->head;
+        l = append(l, 10);
+        l = append(l, 20);
+        l = append(l, 30);
+        struct node *p = l->head;
+        while (p != NULL) {
+            printf("%d ", p->data);
+            p = p->next;
+        }
+        printf("\n\n");
+
+        // Test delete()
+        printf("Test delete():\n");
+        l = delete(l, 20);
+        p = l->head;
+        while (p != NULL) {
+            printf("%d ", p->data);
+            p = p->next;
+        }
+        printf("\n\n");
+
+        // Test find()
+        printf("Test find():\n");
+        struct list *found = find(l, 30);
+        if (found != NULL) {
+            printf("Element gefunden: %d\n", found->head->data);
+        } else {
+            printf("Element nicht gefunden.\n");
+        }
+        found = find(l, 20);
+        if (found != NULL) {
+            printf("Element gefunden: %d\n", found->head->data);
+        } else {
+            printf("Element nicht gefunden.\n");
+        }	
 
 	return 0;
 }
