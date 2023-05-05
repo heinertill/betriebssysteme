@@ -1,0 +1,7 @@
+1) 
+stdin: standard input
+stdout: standard output
+stderr: standard error
+
+2)
+Unterteilung zwischen Fehlern/Warnings und Info
