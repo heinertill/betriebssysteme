@@ -28,13 +28,13 @@ int main (int argc, char *argv[]) {
 	L->tail = &L->head;
 	L->head = NULL;	
 
-	printf("Adding Elements:\n");
+	printf("Adding Elements:\nAdding: ");
 	for (int i = 0; i < argc-1; i++) {
-		printf("Adding %d", atoi(argv[i+1]));
+		printf("%d, ", atoi(argv[i+1]));
 		push(L, atoi(argv[i+1]));
 	}
 	
-	printf("First Iteration:\n");
+	printf("\nFirst Iteration:\n");
 	printList(*(L->head));
 
 	printf("Popping first 2 Elements...\n");
