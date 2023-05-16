@@ -10,8 +10,8 @@
 
 int main(int argc, char **argv) {
 
-	// char pointer pointer for execv usage (ends with NULL)
-	char *args[2];
+	// char pointer pointer for execv usage (ends with NULL and starts with program name)
+	char *args[MAX_ARGS + 2];
 	args[1] = NULL;
 
 	int ret;
@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 			} else if (pid2 == 0) {
 				// this printf was used for testing the parameters
 				printf("Calling %s\n", args[0]);
-				execv(args[0], args);
+				execvp(args[0], args);
 				exit(EXIT_SUCCESS);
 			} else {
 				wait(&ret);
