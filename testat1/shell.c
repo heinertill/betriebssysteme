@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define MAX_ARGS 10
+
 int main(int argc, char **argv) {
 
 	// char pointer pointer for execv usage (ends with NULL)
@@ -27,6 +29,7 @@ int main(int argc, char **argv) {
 			exit(EXIT_FAILURE);
 		} else if (pid == 0) {
 			args[0] = "/bin/pwd";
+			args[1] = NULL;
 			execv(args[0], args);
 			exit(EXIT_SUCCESS);
 		} else {
@@ -36,30 +39,25 @@ int main(int argc, char **argv) {
 			// create an input buffer with size of 100 characters
 			char inputBuffer[100];
 			fgets(inputBuffer, 100, stdin);
+			
+			// replace the newline character with the string termination character
+			inputBuffer[strcspn(inputBuffer, "\n")] = '\0';
 
 			// included for testing input string 
 			//printf("You've entered: %s", inputBuffer);
 			
-			// array for execv inside parent, length of 10 for up to 8 parameters
-			char *args2[10];
-			char *delimiter = " ";
-			char *ptr;
+			// tokenize the input into the program name and the parameters
+			char *token = strtok(inputBuffer, " ");
+			int argCount = 0;
 			
-			// split the input into tokens, the first one will be the program name and the others are the parameters for the call
-			ptr = strtok(inputBuffer, delimiter);
-			
-			char* programPath = malloc(strlen("/bin/") + strlen(ptr) + 1);
-			strcpy(programPath, "/bin/");
-			strcat(programPath, ptr);
-			args2[0] = programPath;
-
-
-			int i = 1;
-			while (ptr != NULL) {
-				args2[i] = ptr;
-				ptr = strtok(NULL, delimiter);
-				i++;
+			while (token != NULL && argCount < MAX_ARGS) {
+				args[argCount] = token;
+				argCount++;
+				token = strtok(NULL, " ");
 			}
+
+			// last argument should be NULL
+			args[argCount] = NULL;
 
 			// create another fork to call the program
 			int pid2 = fork();
@@ -68,12 +66,11 @@ int main(int argc, char **argv) {
 				exit(EXIT_FAILURE);
 			} else if (pid2 == 0) {
 				// this printf was used for testing the parameters
-				printf("Calling %s\n", programPath);
-				execv(args2[0], args2);
+				printf("Calling %s\n", args[0]);
+				execv(args[0], args);
 				exit(EXIT_SUCCESS);
 			} else {
 				wait(&ret);
-				free(programPath);
 			}
 		}
 	}
