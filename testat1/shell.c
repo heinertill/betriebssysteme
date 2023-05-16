@@ -42,14 +42,24 @@ int main(int argc, char **argv) {
 			
 			// array for execv inside parent, length of 10 for up to 8 parameters
 			char *args2[10];
-			char programPath[] = "/bin/";
 			char *delimiter = " ";
 			char *ptr;
-
+			
 			// split the input into tokens, the first one will be the program name and the others are the parameters for the call
 			ptr = strtok(inputBuffer, delimiter);
+			
+			char* programPath = malloc(strlen("/bin/") + strlen(ptr) + 1);
+			strcpy(programPath, "/bin/");
 			strcat(programPath, ptr);
+			args2[0] = programPath;
 
+
+			int i = 1;
+			while (ptr != NULL) {
+				args2[i] = ptr;
+				ptr = strtok(NULL, delimiter);
+				i++;
+			}
 
 			// create another fork to call the program
 			int pid2 = fork();
@@ -57,10 +67,13 @@ int main(int argc, char **argv) {
 			if (pid2 == -1) {
 				exit(EXIT_FAILURE);
 			} else if (pid2 == 0) {
+				// this printf was used for testing the parameters
 				printf("Calling %s\n", programPath);
+				execv(args2[0], args2);
 				exit(EXIT_SUCCESS);
 			} else {
 				wait(&ret);
+				free(programPath);
 			}
 		}
 	}
