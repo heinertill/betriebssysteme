@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <signal.h>
 
 #define MAX_ARGS 10
 
@@ -12,8 +13,6 @@ int main(int argc, char **argv) {
 
 	// char pointer pointer for execv usage (ends with NULL and starts with program name)
 	char *args[MAX_ARGS + 2];
-	args[1] = NULL;
-
 	int ret;
 	int pid = -1;
 
@@ -58,7 +57,7 @@ int main(int argc, char **argv) {
 					perror("cd");
 				}
 			} else {
-				printf("missing argument for cd.");
+				fprintf(stderr, "Missing Argument for cd.");
 			}
 			continue; //skip usual execution of shell program
 		}
