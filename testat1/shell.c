@@ -59,6 +59,23 @@ int main(int argc, char **argv) {
 			// last argument should be NULL
 			args[argCount] = NULL;
 
+			// before creating a fork, check if the wanted program is cd, then following code should execute
+			if (strcmp(args[0], "cd") == 0) {
+				if (argCount > 0) {
+					if (chdir(args[1]) == -1) {
+						perror("cd");
+					}
+				} else {
+					printf("missing argument for cd.");
+				}
+				continue; //skip usual execution of shell program
+			}
+
+			// also check if input is exit, then program should stop
+			if (strcmp(args[0], "exit") == 0) {
+				exit(EXIT_SUCCESS);
+			}
+
 			// create another fork to call the program
 			int pid2 = fork();
 
@@ -66,7 +83,7 @@ int main(int argc, char **argv) {
 				exit(EXIT_FAILURE);
 			} else if (pid2 == 0) {
 				// this printf was used for testing the parameters
-				printf("Calling %s\n", args[0]);
+				//printf("Calling %s\n", args[0]);
 				execvp(args[0], args);
 				exit(EXIT_SUCCESS);
 			} else {
