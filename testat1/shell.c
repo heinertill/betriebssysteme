@@ -9,7 +9,14 @@
 
 #define MAX_ARGS 10
 
+// this function gets called, when ctrl+c is pressed
+void escSeqHandler(int signal) {
+	printf("You've pressed Ctrl+C. Please use exit instead.\n");
+}
+
 int main(int argc, char **argv) {
+	// register the handler for strg+c
+	signal(SIGINT, escSeqHandler);
 
 	// char pointer pointer for execv usage (ends with NULL and starts with program name)
 	char *args[MAX_ARGS + 2];
@@ -30,17 +37,23 @@ int main(int argc, char **argv) {
 		// create an input buffer with size of 100 characters
 		char inputBuffer[100];
 		fgets(inputBuffer, 100, stdin);
-		
+
+		// check if input is empty and skip iteration
+		if (inputBuffer[0] == '\n') {
+			continue;
+		}
+
 		// replace the newline character with the string termination character
 		inputBuffer[strcspn(inputBuffer, "\n")] = '\0';
 
 		// included for testing input string 
 		//printf("You've entered: %s", inputBuffer);
 		
-		// tokenize the input into the program name and the parameters
+		// tokenize the input into the program name and the parameters, also counting the argument amount so the last one can be set to NULL later
 		char *token = strtok(inputBuffer, " ");
 		int argCount = 0;
 		
+		// loop through 
 		while (token != NULL && argCount < MAX_ARGS) {
 			args[argCount] = token;
 			argCount++;
@@ -50,7 +63,9 @@ int main(int argc, char **argv) {
 		// last argument should be NULL
 		args[argCount] = NULL;
 
+
 		// before creating a fork, check if the wanted program is cd, then following code should execute
+		// strcmp compares two strings, returns 0 if they are the same
 		if (strcmp(args[0], "cd") == 0) {
 			if (argCount > 0) {
 				if (chdir(args[1]) == -1) {
@@ -69,7 +84,8 @@ int main(int argc, char **argv) {
 
 		// create another fork to call the program
 		int pid2 = fork();
-
+		
+		// pid == -1 means failure, pid == 0 means the current process is the child, else the process is the parent
 		if (pid2 == -1) {
 			exit(EXIT_FAILURE);
 		} else if (pid2 == 0) {
