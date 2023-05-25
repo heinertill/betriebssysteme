@@ -1,0 +1,5 @@
+a) "non-preemptive" Scheduling
+Bei non-preemptive Scheduling werden keine laufenden Prozesse auf der CPU unterbrochen. 
+
+b) Benachteiligt Round Robin Verfahren CPU-intensive Verfahren?
+Generell kann man sagen, dass alle Prozesse gleich viel Rechenzeit bekommen. Dementsprechend kann man schwer sagen, ob CPU-intensive Prozesse benachteiligt werden. Im Vergleich zu non-preemptive Verfahren fehlt den Prozessen die Zeit, alles hintereinander auszuführen.
